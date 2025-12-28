@@ -1,0 +1,35 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Admin – News{% endblock %}
+
+{% block content %}
+
+<h2>📰 Add News</h2>
+
+<form method="POST">
+  <input type="text" name="title" placeholder="News title" required>
+  <textarea name="content" placeholder="News content" rows="5" required></textarea>
+  <button type="submit">Publish News</button>
+</form>
+
+<hr style="margin:40px 0;">
+
+<h3>🗂 Existing News</h3>
+
+{% for item in news_items %}
+  <div class="card">
+    <strong>{{ item[1] }}</strong><br>
+    <small>{{ item[3] }}</small>
+
+    <div style="margin-top:10px;">
+      <a class="btn" href="/admin/news/edit/{{ item[0] }}">✏ Edit</a>
+      <a class="btn btn-danger"
+         href="/admin/news/delete/{{ item[0] }}"
+         onclick="return confirm('Delete this news?')">
+         🗑 Delete
+      </a>
+    </div>
+  </div>
+{% endfor %}
+
+{% endblock %}

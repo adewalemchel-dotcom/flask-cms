@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{% block title %}Admin{% endblock %}</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f6f8;
+      margin: 0;
+    }
+
+    .admin-header {
+      background: #111;
+      color: #fff;
+      padding: 16px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .admin-header a {
+      color: #fff;
+      text-decoration: none;
+      margin-left: 20px;
+      font-size: 0.95rem;
+    }
+
+    .admin-container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    }
+
+    h1, h2, h3 {
+      margin-top: 0;
+    }
+
+    .admin-nav a {
+      margin-right: 20px;
+      font-weight: 600;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 16px;
+      background: #111;
+      color: #fff;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .btn-danger {
+      background: #c0392b;
+    }
+
+    input, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      font-size: 1rem;
+    }
+
+    button {
+      background: #111;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    .card {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-header">
+  <div>🛠 Admin Panel</div>
+  <div>
+    <a href="/admin/news">News</a>
+    <a href="/admin/waitlist">Waitlist</a>
+    <a href="/admin/logout">Logout</a>
+  </div>
+</div>
+
+<div class="admin-container">
+  {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

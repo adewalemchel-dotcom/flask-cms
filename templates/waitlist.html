@@ -1,0 +1,13 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Admin – Waitlist{% endblock %}
+
+{% block content %}
+
+<h2>📩 Waitlist Emails</h2>
+
+{% for email in emails %}
+  <div class="card">{{ email[0] }}</div>
+{% endfor %}
+
+{% endblock %}
