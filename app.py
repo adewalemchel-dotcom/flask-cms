@@ -27,6 +27,22 @@ def init_db():
     conn.commit()
     conn.close()
 
+def init_db():
+    conn = sqlite3.connect("waitlist.db")
+    cursor = conn.cursor()
+
+    # FAQ table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS faq (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            question TEXT NOT NULL,
+            answer TEXT NOT NULL
+        )
+    """)
+
+    conn.commit()
+    conn.close()
+
 
 app = Flask(__name__)
 app.secret_key = "8f3k9aL2xQ7mP4Zs9D1WcR0Y"
