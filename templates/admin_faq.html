@@ -1,0 +1,32 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Admin – FAQ{% endblock %}
+
+{% block content %}
+
+<h2>❓ Add FAQ</h2>
+
+<form method="POST">
+  <input type="text" name="question" placeholder="Question" required>
+  <textarea name="answer" placeholder="Answer" rows="4" required></textarea>
+  <button type="submit">Add FAQ</button>
+</form>
+
+<hr style="margin:40px 0;">
+
+<h3>📋 Existing FAQs</h3>
+
+{% for item in faqs %}
+  <div class="card">
+    <strong>{{ item[1] }}</strong>
+    <p>{{ item[2] }}</p>
+
+    <a class="btn" href="/admin/faq/edit/{{ item[0] }}">✏ Edit</a>
+    <a class="btn btn-danger"
+       href="/admin/faq/delete/{{ item[0] }}"
+       onclick="return confirm('Delete this FAQ?')">🗑 Delete</a>
+  </div>
+{% endfor %}
+
+
+{% endblock %}

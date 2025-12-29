@@ -100,7 +100,13 @@ def community():
 
 @app.route("/faq")
 def faq():
-    return render_template("faq.html")
+    conn = sqlite3.connect("waitlist.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT question, answer FROM faq")
+    faqs = cursor.fetchall()
+    conn.close()
+
+    return render_template("faq.html", faqs=faqs)
 
 # ------------------ NEWS ------------------
 
@@ -206,6 +212,72 @@ def delete_news(news_id):
     conn.close()
 
     return redirect("/news")
+
+@app.route("/admin/faq", methods=["GET", "POST"])
+def admin_faq():
+    if not session.get("admin_logged_in"):
+        return redirect("/admin/login")
+
+    conn = sqlite3.connect("waitlist.db")
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+        question = request.form["question"]
+        answer = request.form["answer"]
+
+        cursor.execute(
+            "INSERT INTO faq (question, answer) VALUES (?, ?)",
+            (question, answer)
+        )
+        conn.commit()
+
+    cursor.execute("SELECT id, question, answer FROM faq")
+    faqs = cursor.fetchall()
+    conn.close()
+
+    return render_template("admin_faq.html", faqs=faqs)
+
+@app.route("/admin/faq/delete/<int:faq_id>")
+def delete_faq(faq_id):
+    if not session.get("admin_logged_in"):
+        return redirect("/admin/login")
+
+    conn = sqlite3.connect("waitlist.db")
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM faq WHERE id = ?", (faq_id,))
+    conn.commit()
+    conn.close()
+
+    return redirect("/admin/faq")
+
+@app.route("/admin/faq/edit/<int:faq_id>", methods=["GET", "POST"])
+def edit_faq(faq_id):
+    if not session.get("admin_logged_in"):
+        return redirect("/admin/login")
+
+    conn = sqlite3.connect("waitlist.db")
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+        question = request.form["question"]
+        answer = request.form["answer"]
+
+        cursor.execute(
+            "UPDATE faq SET question = ?, answer = ? WHERE id = ?",
+            (question, answer, faq_id)
+        )
+        conn.commit()
+        conn.close()
+        return redirect("/admin/faq")
+
+    cursor.execute(
+        "SELECT id, question, answer FROM faq WHERE id = ?",
+        (faq_id,)
+    )
+    faq = cursor.fetchone()
+    conn.close()
+
+    return render_template("edit_faq.html", faq=faq)
 
 # ------------------ RUN APP ------------------
 

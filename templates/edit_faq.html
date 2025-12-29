@@ -1,0 +1,22 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Edit FAQ{% endblock %}
+
+{% block content %}
+
+<h2>✏ Edit FAQ</h2>
+
+<form method="POST">
+  <input type="text"
+         name="question"
+         value="{{ faq[1] }}"
+         required>
+
+  <textarea name="answer"
+            rows="5"
+            required>{{ faq[2] }}</textarea>
+
+  <button type="submit">Update FAQ</button>
+</form>
+
+{% endblock %}
