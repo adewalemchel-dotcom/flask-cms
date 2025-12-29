@@ -29,7 +29,7 @@ def init_db():
 
 
 app = Flask(__name__)
-app.secret_key = "super-secret-key-change-this"
+app.secret_key = "8f3k9aL2xQ7mP4Zs9D1WcR0Y"
 
 init_db()
 
