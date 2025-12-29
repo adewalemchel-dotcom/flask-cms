@@ -2,19 +2,49 @@ from flask import Flask, render_template, request, redirect, session
 import sqlite3
 from datetime import datetime
 
-app = Flask(__name__)
+def init_db():
+    conn = sqlite3.connect("waitlist.db")
+    cursor = conn.cursor()
 
+    # WAITLIST TABLE
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS waitlist (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL
+        )
+    """)
+
+    # NEWS TABLE
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS news (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            content TEXT NOT NULL,
+            date TEXT NOT NULL
+        )
+    """)
+
+    conn.commit()
+    conn.close()
+
+
+app = Flask(__name__)
 app.secret_key = "super-secret-key-change-this"
+
+init_db()
 
 # ------------------ SHARED DATA ------------------
 
 def get_total_members():
-    conn = sqlite3.connect("waitlist.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT COUNT(*) FROM waitlist")
-    count = cursor.fetchone()[0]
-    conn.close()
-    return count
+    try:
+        conn = sqlite3.connect("waitlist.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM waitlist")
+        count = cursor.fetchone()[0]
+        conn.close()
+        return count
+    except:
+        return 0
 
 @app.context_processor
 def inject_global_data():
