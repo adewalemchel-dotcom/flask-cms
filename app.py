@@ -24,14 +24,7 @@ def init_db():
         )
     """)
 
-    conn.commit()
-    conn.close()
-
-def init_db():
-    conn = sqlite3.connect("waitlist.db")
-    cursor = conn.cursor()
-
-    # FAQ table
+    # FAQ TABLE
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS faq (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
