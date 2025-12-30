@@ -1,33 +1,42 @@
 from flask import Flask, render_template, request, redirect, session
-import sqlite3
 from datetime import datetime
+import psycopg2
+import os
+
+app = Flask(__name__)
+app.secret_key = "8f3k9aL2xQ7mP4Zs9D1WcR0Y"
+
+
+def get_db():
+    return psycopg2.connect(
+        os.environ.get("DATABASE_URL"),
+        sslmode="require"
+    )
+
 
 def init_db():
-    conn = sqlite3.connect("waitlist.db")
+    conn = get_db()
     cursor = conn.cursor()
 
-    # WAITLIST TABLE
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS waitlist (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             email TEXT NOT NULL
         )
     """)
 
-    # NEWS TABLE
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS news (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             title TEXT NOT NULL,
             content TEXT NOT NULL,
             date TEXT NOT NULL
         )
     """)
 
-    # FAQ TABLE
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS faq (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             question TEXT NOT NULL,
             answer TEXT NOT NULL
         )
@@ -37,16 +46,15 @@ def init_db():
     conn.close()
 
 
-app = Flask(__name__)
-app.secret_key = "8f3k9aL2xQ7mP4Zs9D1WcR0Y"
-
+# ✅ CALL AFTER DEFINITIONS
 init_db()
+
 
 # ------------------ SHARED DATA ------------------
 
 def get_total_members():
     try:
-        conn = sqlite3.connect("waitlist.db")
+        conn = get_db()
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM waitlist")
         count = cursor.fetchone()[0]
@@ -64,9 +72,9 @@ def inject_global_data():
 # ------------------ DATABASE HELPERS ------------------
 
 def save_email(email):
-    conn = sqlite3.connect("waitlist.db")
+    conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO waitlist (email) VALUES (?)", (email,))
+    cursor.execute("INSERT INTO waitlist (email) VALUES (%s)", (email,))
     conn.commit()
     conn.close()
 
@@ -109,7 +117,7 @@ def community():
 
 @app.route("/faq")
 def faq():
-    conn = sqlite3.connect("waitlist.db")
+    conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT question, answer FROM faq")
     faqs = cursor.fetchall()
@@ -121,7 +129,7 @@ def faq():
 
 @app.route("/news")
 def news():
-    conn = sqlite3.connect("waitlist.db")
+    conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT id, title, content, date FROM news ORDER BY id DESC")
     news_items = cursor.fetchall()
@@ -142,7 +150,7 @@ def view_waitlist():
     if not session.get("admin_logged_in"):
         return redirect("/admin/login")
 
-    conn = sqlite3.connect("waitlist.db")
+    conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT email FROM waitlist")
     emails = cursor.fetchall()
@@ -158,7 +166,7 @@ def admin_news():
     if not session.get("admin_logged_in"):
         return redirect("/admin/login")
 
-    conn = sqlite3.connect("waitlist.db")
+    conn = get_db()
     cursor = conn.cursor()
 
     # HANDLE NEW POST
@@ -168,7 +176,7 @@ def admin_news():
         date = datetime.now().strftime("%b %d, %Y")
 
         cursor.execute(
-            "INSERT INTO news (title, content, date) VALUES (?, ?, ?)",
+            "INSERT INTO news (title, content, date) VALUES (%s, %s, %s)",
             (title, content, date)
         )
         conn.commit()
@@ -186,7 +194,7 @@ def edit_news(news_id):
     if not session.get("admin_logged_in"):
         return redirect("/admin/login")
 
-    conn = sqlite3.connect("waitlist.db")
+    conn = get_db()
     cursor = conn.cursor()
 
     if request.method == "POST":
@@ -194,7 +202,7 @@ def edit_news(news_id):
         content = request.form["content"]
 
         cursor.execute(
-            "UPDATE news SET title = ?, content = ? WHERE id = ?",
+            "UPDATE news SET title = %s, content = %s WHERE id = %s",
             (title, content, news_id)
         )
         conn.commit()
@@ -202,7 +210,7 @@ def edit_news(news_id):
 
         return redirect("/news")
 
-    cursor.execute("SELECT * FROM news WHERE id = ?", (news_id,))
+    cursor.execute("SELECT * FROM news WHERE id = %s", (news_id,))
     news = cursor.fetchone()
     conn.close()
 
@@ -213,10 +221,10 @@ def delete_news(news_id):
     if not session.get("admin_logged_in"):
         return redirect("/admin/login")
     
-    conn = sqlite3.connect("waitlist.db")
+    conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("DELETE FROM news WHERE id = ?", (news_id,))
+    cursor.execute("DELETE FROM news WHERE id = %s", (news_id,))
     conn.commit()
     conn.close()
 
@@ -227,7 +235,7 @@ def admin_faq():
     if not session.get("admin_logged_in"):
         return redirect("/admin/login")
 
-    conn = sqlite3.connect("waitlist.db")
+    conn = get_db()
     cursor = conn.cursor()
 
     if request.method == "POST":
@@ -235,7 +243,7 @@ def admin_faq():
         answer = request.form["answer"]
 
         cursor.execute(
-            "INSERT INTO faq (question, answer) VALUES (?, ?)",
+            "INSERT INTO faq (question, answer) VALUES (%s, %s)",
             (question, answer)
         )
         conn.commit()
@@ -251,9 +259,9 @@ def delete_faq(faq_id):
     if not session.get("admin_logged_in"):
         return redirect("/admin/login")
 
-    conn = sqlite3.connect("waitlist.db")
+    conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM faq WHERE id = ?", (faq_id,))
+    cursor.execute("DELETE FROM faq WHERE id = %s", (faq_id,))
     conn.commit()
     conn.close()
 
@@ -264,7 +272,7 @@ def edit_faq(faq_id):
     if not session.get("admin_logged_in"):
         return redirect("/admin/login")
 
-    conn = sqlite3.connect("waitlist.db")
+    conn = get_db()
     cursor = conn.cursor()
 
     if request.method == "POST":
@@ -272,7 +280,7 @@ def edit_faq(faq_id):
         answer = request.form["answer"]
 
         cursor.execute(
-            "UPDATE faq SET question = ?, answer = ? WHERE id = ?",
+            "UPDATE faq SET question = %s, answer = %s WHERE id = %s",
             (question, answer, faq_id)
         )
         conn.commit()
@@ -280,7 +288,7 @@ def edit_faq(faq_id):
         return redirect("/admin/faq")
 
     cursor.execute(
-        "SELECT id, question, answer FROM faq WHERE id = ?",
+        "SELECT id, question, answer FROM faq WHERE id = %s",
         (faq_id,)
     )
     faq = cursor.fetchone()
