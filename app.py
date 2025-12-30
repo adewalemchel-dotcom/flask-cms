@@ -46,10 +46,6 @@ def init_db():
     conn.close()
 
 
-# ✅ CALL AFTER DEFINITIONS
-init_db()
-
-
 # ------------------ SHARED DATA ------------------
 
 def get_total_members():
@@ -299,4 +295,5 @@ def edit_faq(faq_id):
 # ------------------ RUN APP ------------------
 
 if __name__ == "__main__":
+    init_db()
     app.run()
