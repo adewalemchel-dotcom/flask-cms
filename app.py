@@ -121,10 +121,6 @@ def faq():
 
     return render_template("faq.html", faqs=faqs)
 
-@app.route("/__init_db")
-def force_init_db():
-    init_db()
-    return "DB initialized"
 
 # ------------------ NEWS ------------------
 
