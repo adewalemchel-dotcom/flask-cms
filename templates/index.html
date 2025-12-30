@@ -18,22 +18,75 @@
     }
 
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      scroll-behavior: smooth;
+    }
 
-    /* FADE-IN ANIMATION */
-    .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.9s ease, transform 0.9s ease; }
-    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     /* NAVBAR */
-    .navbar { position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); box-shadow: 0 6px 20px rgba(0,0,0,0.05); }
-    .nav-container { max-width: 1200px; margin: 0 auto; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
-    .logo { font-weight: 700; font-size: 1.05rem; }
-    .nav-links { list-style: none; display: flex; gap: 28px; margin: 0; padding: 0; align-items: center; }
-    .nav-links a { text-decoration: none; color: var(--text); font-weight: 500; }
-    .nav-links a.active { color: var(--primary); font-weight: 600; }
-    .nav-cta { padding: 10px 18px; background: var(--text); color: #fff !important; border-radius: 10px; font-weight: 600; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
-    .menu-toggle { display: none; font-size: 1.6rem; cursor: pointer; }
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+    }
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 28px;
+      margin: 0;
+      padding: 0;
+      align-items: center;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+    }
+    .nav-links a.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .nav-cta {
+      padding: 10px 18px;
+      background: var(--text);
+      color: #fff !important;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .menu-toggle {
+      display: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+    }
 
     @media (max-width: 760px) {
       .nav-links { display: none; flex-direction: column; gap: 16px; margin-top: 20px; }
@@ -42,46 +95,100 @@
     }
 
     /* HERO */
-    .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent)); color: #fff; }
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+      color: #fff;
+    }
     .hero-content { max-width: 800px; }
-    .hero h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 700; margin-bottom: 20px; }
-    .hero p { font-size: 1.2rem; opacity: 0.95; margin-bottom: 35px; }
-    .cta-btn { background: #fff; color: var(--text); padding: 16px 34px; border-radius: 14px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
-    .cta-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      opacity: 0.95;
+      margin-bottom: 20px;
+    }
+    .cta-btn {
+      background: #fff;
+      color: var(--text);
+      padding: 16px 34px;
+      border-radius: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
 
     /* SECTIONS */
-    .section { max-width: 1100px; margin: 100px auto; padding: 0 20px; }
-    .section h2 { text-align: center; font-size: 2.3rem; font-weight: 700; margin-bottom: 15px; background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; color: transparent; }
-    .section p.section-desc { text-align: center; max-width: 700px; margin: 0 auto 50px; color: #444; }
+    .section {
+      max-width: 1100px;
+      margin: 100px auto;
+      padding: 0 20px;
+    }
+    .section h2 {
+      text-align: center;
+      font-size: 2.3rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .section-desc {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 50px;
+      color: #444;
+    }
 
-    /* FEATURES */
-    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; }
-    .card { background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 12px 30px rgba(0,0,0,0.06); transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    .card:hover { transform: translateY(-6px); box-shadow: 0 20px 45px rgba(0,0,0,0.12); }
-    .card h3 { font-size: 1.35rem; margin-bottom: 10px; }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 30px;
+    }
+    .card {
+      background: #fff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+    }
 
-    /* WAITLIST */
-    .waitlist { background: #fff; padding: 70px 30px; border-radius: 28px; box-shadow: 0 25px 60px rgba(0,0,0,0.08); text-align: center; }
-    .waitlist form { margin-top: 25px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
-    .waitlist input { padding: 14px 18px; border-radius: 12px; border: 1px solid #ccc; width: 260px; font-size: 1rem; }
+    .waitlist {
+      background: #fff;
+      padding: 70px 30px;
+      border-radius: 28px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.08);
+      text-align: center;
+    }
 
-    /* FOOTER */
-    footer { text-align: center; padding: 40px 20px 30px; font-size: 0.9rem; color: #666; }
-
-    @media (max-width: 600px) { .hero p { font-size: 1.05rem; } }
+    footer {
+      text-align: center;
+      padding: 40px 20px 30px;
+      font-size: 0.9rem;
+      color: #666;
+    }
   </style>
 </head>
+
 <body>
 
-  <!-- NAVIGATION BAR -->
 <nav class="navbar">
   <div class="nav-container">
     <div class="logo">
-  Audiology Students Network
-  <span style="font-size:0.75rem; color:#666;">
-    ({{ total_members }} members)
-  </span>
-</div>
+      Audiology Students Network
+      <span style="font-size:0.75rem; color:#666;">
+        ({{ total_members }} members)
+      </span>
+    </div>
     <div class="menu-toggle" onclick="toggleMenu()">&#9776;</div>
     <ul class="nav-links">
       <li><a href="/" class="active">Home</a></li>
@@ -94,91 +201,106 @@
   </div>
 </nav>
 
-  <!-- HERO -->
-  <header class="hero fade-in">
-    <div class="hero-content">
-      <h1>Connecting the Next Generation of Hearing Experts</h1>
-      <p>A nationwide community empowering Audiology students in Nigeria through collaboration, shared knowledge, and real career opportunities.</p>
-      <a href="#waitlist" class="cta-btn">Join Early Access</a>
-      <p><strong>{{ total_members }}</strong> students have already joined the network.</p>
+<header class="hero fade-in">
+  <div class="hero-content">
+    <h1>A Growing Network for the Next Generation of Hearing Experts</h1>
+    <p>
+      A nationwide initiative supporting audiology students in Nigeria
+      through shared knowledge, connection, and opportunity.
+    </p>
+
+    <p style="background:rgba(255,255,255,0.15); padding:12px 18px; border-radius:10px; font-size:0.95rem; max-width:600px; margin:20px auto;">
+      <strong>Early Access:</strong>
+      The Audiology Students Network is currently in early access.
+      Features will roll out in phases as the community grows.
+    </p>
+
+    <a href="#waitlist" class="cta-btn">Join Early Access</a>
+    <p><strong>{{ total_members }}</strong> students have already joined.</p>
+  </div>
+</header>
+
+<section class="section fade-in">
+  <h2>What We’re Building</h2>
+  <p class="section-desc">
+    A supportive space designed to help audiology students grow academically,
+    clinically, and professionally.
+  </p>
+
+  <div class="features">
+    <div class="card">
+      <h3>👥 Nationwide Community</h3>
+      <p>
+        A growing network connecting audiology students across universities
+        to learn and grow together.
+      </p>
     </div>
-  </header>
 
-  <!-- FEATURES -->
-  <section class="section fade-in">
-    <h2>What You'll Find Inside</h2>
-    <p class="section-desc">Everything you need to grow academically, clinically, and professionally as an audiology student.</p>
-    <div class="features">
-      <div class="card">
-        <h3>👥 Nationwide Community</h3>
-        <p>Connect with audiology students across universities and build meaningful professional relationships.</p>
-      </div>
-      <div class="card">
-        <h3>📚 Learning Resources</h3>
-        <p>Access curated notes, research papers, exam prep materials, and clinical guides.</p>
-      </div>
-      <div class="card">
-        <h3>🎤 Expert Sessions</h3>
-        <p>Join live discussions and workshops with audiologists and hearing scientists.</p>
-      </div>
-      <div class="card">
-        <h3>🚀 Career Growth</h3>
-        <p>Find internships, conferences, scholarships, and global opportunities.</p>
-      </div>
+    <div class="card">
+      <h3>📚 Learning Resources</h3>
+      <p>
+        We are building a curated library of notes, research papers,
+        exam prep materials, and clinical guides.
+      </p>
     </div>
-  </section>
 
-  <!-- WAITLIST -->
-<section id="waitlist" class="section fade-in">
-  <div class="waitlist">
-    <h2>Be Among the First to Join</h2>
-    <p class="section-desc">Leave your email and get notified when the platform launches.</p>
+    <div class="card">
+      <h3>🎤 Expert Sessions</h3>
+      <p>
+        Upcoming expert-led discussions and workshops to support learning
+        and career development.
+      </p>
+    </div>
 
-    <!-- NEW FORM -->
-    <form action="/join" method="POST" style="margin-top:25px; display:flex; flex-wrap:wrap; justify-content:center; gap:12px;">
-      <input type="email" name="email" placeholder="Enter your email" required style="padding:14px 18px; border-radius:12px; border:1px solid #ccc; width:260px; font-size:1rem;">
-      <button type="submit" class="cta-btn">Join Early Access</button>
-    </form>
-
+    <div class="card">
+      <h3>🚀 Career Growth</h3>
+      <p>
+        Discover internships, conferences, scholarships, and opportunities
+        as they become available.
+      </p>
+    </div>
   </div>
 </section>
 
-  <body>
+<section id="waitlist" class="section fade-in">
+  <div class="waitlist">
+    <h2>Join the Early Access List</h2>
+    <p class="section-desc">
+      Be part of the founding community and stay informed as new features roll out.
+    </p>
 
-  <!-- News Section -->
-<section class="home-news section fade-in" style="background:#fff; padding:70px 20px; border-radius:28px; box-shadow:0 20px 45px rgba(0,0,0,0.08); text-align:center; max-width:1100px; margin:50px auto;">
-  <h2 style="font-size:2.2rem; font-weight:700; margin-bottom:20px; background:linear-gradient(90deg,#0d99ff,#b34dff); -webkit-background-clip:text; color:transparent;">
-    Latest News
-  </h2>
-  <p style="color:#444; font-size:1.1rem; max-width:700px; margin:0 auto 30px;">
-    Stay updated with the newest announcements, events, and insights for audiology students.
-  </p>
-  <a href="news.html" class="cta-btn" style="display:inline-block; padding:16px 36px; background:#111; color:#fff; border-radius:14px; font-weight:600; text-decoration:none; box-shadow:0 10px 25px rgba(0,0,0,0.15); transition:transform 0.25s ease, box-shadow 0.25s ease;">
-    Read News
-  </a>
+    <form action="/join" method="POST">
+      <input type="email" name="email" placeholder="Enter your email" required>
+      <button type="submit" class="cta-btn">Join Early Access</button>
+    </form>
+  </div>
 </section>
 
-  <!-- FOOTER -->
-  <footer>
-    Audiology Students Network © 2025 · Built for future hearing experts
-  </footer>
+<section class="section fade-in" style="background:#fff; padding:70px 20px; border-radius:28px; box-shadow:0 20px 45px rgba(0,0,0,0.08); text-align:center;">
+  <h2>Latest News</h2>
+  <p class="section-desc">
+    Announcements, updates, and insights for audiology students.
+  </p>
+  <a href="/news" class="cta-btn" style="background:#111; color:#fff;">Read News</a>
+</section>
 
-  <!-- JS -->
-  <script>
-    // Fade-in sections
-    const faders = document.querySelectorAll('.fade-in');
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
-      });
-    }, { threshold: 0.3 });
-    faders.forEach(el => observer.observe(el));
+<footer>
+  Audiology Students Network © 2025 · Built for future hearing experts
+</footer>
 
-    // Mobile menu toggle
-    function toggleMenu() {
-      document.querySelector('.nav-links').classList.toggle('open');
-    }
-  </script>
+<script>
+  const faders = document.querySelectorAll('.fade-in');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.3 });
+  faders.forEach(el => observer.observe(el));
+
+  function toggleMenu() {
+    document.querySelector('.nav-links').classList.toggle('open');
+  }
+</script>
 
 </body>
 </html>
