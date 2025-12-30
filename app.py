@@ -121,6 +121,11 @@ def faq():
 
     return render_template("faq.html", faqs=faqs)
 
+@app.route("/__init_db")
+def force_init_db():
+    init_db()
+    return "DB initialized"
+
 # ------------------ NEWS ------------------
 
 @app.route("/news")
@@ -295,5 +300,4 @@ def edit_faq(faq_id):
 # ------------------ RUN APP ------------------
 
 if __name__ == "__main__":
-    init_db()
     app.run()
