@@ -4,7 +4,7 @@ import psycopg2
 import os
 
 app = Flask(__name__)
-app.secret_key = "8f3k9aL2xQ7mP4Zs9D1WcR0Y"
+app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
 
 
 def get_db():
@@ -83,7 +83,10 @@ def admin_login():
         password = request.form["password"]
 
         # SIMPLE ADMIN CREDENTIALS
-        if username == "admin" and password == "password123":
+        if (
+            username == os.environ.get("ADMIN_USER")
+            and password == os.environ.get("ADMIN_PASS")
+        ):
             session["admin_logged_in"] = True
             return redirect("/admin/news")
         else:
@@ -205,7 +208,7 @@ def edit_news(news_id):
         conn.commit()
         conn.close()
 
-        return redirect("/news")
+        return redirect("/admin/news")
 
     cursor.execute("SELECT * FROM news WHERE id = %s", (news_id,))
     news = cursor.fetchone()
@@ -225,7 +228,7 @@ def delete_news(news_id):
     conn.commit()
     conn.close()
 
-    return redirect("/news")
+    return redirect("/admin/news")
 
 @app.route("/admin/faq", methods=["GET", "POST"])
 def admin_faq():
@@ -294,6 +297,9 @@ def edit_faq(faq_id):
     return render_template("edit_faq.html", faq=faq)
 
 # ------------------ RUN APP ------------------
+
+with app.app_context():
+    init_db()
 
 if __name__ == "__main__":
     app.run()
