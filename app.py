@@ -365,7 +365,7 @@ def admin_resources():
     conn.close()
 
     return render_template(
-        "admin/resources.html",
+        "admin_resources.html",
         resources=resources
     )
 
