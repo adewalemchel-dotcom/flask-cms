@@ -59,27 +59,22 @@
 </head>
 
 <body>
-
 <div class="container">
   <h1>Learning Resources</h1>
-  <p class="subtitle">
-    Curated materials shared by the Audiology Students Network.
-  </p>
 
   {% if resources %}
     {% for r in resources %}
-     <div class="resource-card">
-      <a href="{{ r[2] }}" target="_blank">{{ r[0] }}</a>
-      <p>{{ r[3] }}</p>
-      <small>Type: {{ r[1] }}</small>
-     </div>
-   {% endfor %}
- {% else %}
-    <p style="text-align:center;color:#666;">
-      Resources will be added soon.
-    </p>
+      <div class="card">
+        <a href="{{ r[2] }}" target="_blank">{{ r[0] }}</a>
+        <p>{{ r[3] }}</p>
+        <small>Type: {{ r[1] }}</small>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>No resources yet.</p>
   {% endif %}
 </div>
+
 
 </body>
 </html>
