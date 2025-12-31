@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, session
 from datetime import datetime
 import psycopg2
 import os
+from database import init_db, migrate_resources
 from werkzeug.utils import secure_filename
 
 
@@ -412,6 +413,7 @@ def delete_resource(resource_id):
 
 with app.app_context():
     init_db()
+    migrate_resources()
 
 if __name__ == "__main__":
     app.run()

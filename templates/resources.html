@@ -33,27 +33,53 @@
 
     .resource-card {
       background: #fff;
-      padding: 20px;
+      padding: 22px;
       border-radius: 14px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.06);
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
 
-    .resource-card a {
+    .resource-title {
+      font-size: 1.1rem;
       font-weight: 600;
       color: #0d99ff;
       text-decoration: none;
-      font-size: 1.05rem;
+    }
+
+    .resource-title:hover {
+      text-decoration: underline;
     }
 
     .resource-card p {
-      margin: 8px 0;
+      margin: 10px 0;
       color: #444;
+      line-height: 1.5;
     }
 
-    .category {
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .type {
       font-size: 0.85rem;
       color: #777;
+    }
+
+    .open-btn {
+      padding: 6px 14px;
+      background: #0d99ff;
+      color: #fff;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .open-btn:hover {
+      background: #0077cc;
     }
   </style>
 </head>
@@ -61,20 +87,34 @@
 <body>
 <div class="container">
   <h1>Learning Resources</h1>
+  <p class="subtitle">
+    Curated materials shared by the Audiology Students Network.
+  </p>
 
   {% if resources %}
     {% for r in resources %}
-      <div class="card">
-        <a href="{{ r[2] }}" target="_blank">{{ r[0] }}</a>
-        <p>{{ r[3] }}</p>
-        <small>Type: {{ r[1] }}</small>
+      <div class="resource-card">
+        <a href="{{ r[2] }}" target="_blank" class="resource-title">
+          {{ r[0] }}
+        </a>
+
+        {% if r[3] %}
+          <p>{{ r[3] }}</p>
+        {% endif %}
+
+        <div class="meta">
+          <span class="type">Type: {{ r[1]|capitalize }}</span>
+          <a href="{{ r[2] }}" target="_blank" class="open-btn">
+            Open →
+          </a>
+        </div>
       </div>
     {% endfor %}
   {% else %}
-    <p>No resources yet.</p>
+    <p style="text-align:center;color:#666;">
+      Resources will be added soon.
+    </p>
   {% endif %}
 </div>
-
-
 </body>
 </html>
