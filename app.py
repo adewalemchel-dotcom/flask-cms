@@ -19,30 +19,6 @@ def get_db():
         sslmode="require"
     )
 
-def migrate_resources_table():
-    conn = get_db()
-    cursor = conn.cursor()
-
-    # Check and add category column
-    cursor.execute("""
-        SELECT column_name
-        FROM information_schema.columns
-        WHERE table_name='resources' AND column_name='category'
-    """)
-    if not cursor.fetchone():
-        cursor.execute("ALTER TABLE resources ADD COLUMN category TEXT")
-
-    # Check and add file_path column
-    cursor.execute("""
-        SELECT column_name
-        FROM information_schema.columns
-        WHERE table_name='resources' AND column_name='file_path'
-    """)
-    if not cursor.fetchone():
-        cursor.execute("ALTER TABLE resources ADD COLUMN file_path TEXT")
-
-    conn.commit()
-    conn.close()
 
 def init_db():
     conn = get_db()
@@ -69,6 +45,16 @@ def init_db():
             id SERIAL PRIMARY KEY,
             question TEXT NOT NULL,
             answer TEXT NOT NULL
+        )
+    """)
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS resources (
+            id SERIAL PRIMARY KEY,
+            title TEXT NOT NULL,
+            resource_type TEXT NOT NULL,
+            url TEXT NOT NULL,
+            description TEXT
         )
     """)
 
