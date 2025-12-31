@@ -39,6 +39,13 @@
       margin-bottom: 22px;
     }
 
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
     .resource-title {
       font-size: 1.1rem;
       font-weight: 600;
@@ -46,21 +53,29 @@
       text-decoration: none;
     }
 
-    .resource-title:hover {
-      text-decoration: underline;
+    .badge {
+      background: #eef3ff;
+      color: #3559c7;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
     }
 
     .resource-card p {
       margin: 10px 0;
       color: #444;
+      line-height: 1.5;
     }
 
     .meta {
       display: flex;
       justify-content: space-between;
-      font-size: 0.85rem;
-      color: #777;
+      align-items: center;
       margin-top: 12px;
+      font-size: 0.8rem;
+      color: #777;
     }
 
     .open-btn {
@@ -68,41 +83,117 @@
       background: #0d99ff;
       color: #fff;
       border-radius: 6px;
+      font-size: 0.85rem;
       text-decoration: none;
       font-weight: 600;
+    }
+
+    .open-btn.disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    mark {
+      background: #fff3a0;
+      padding: 0 4px;
+      border-radius: 4px;
+    }
+
+    .filter-select {
+      width: 100%;
+      max-width: 420px;
+      padding: 12px 16px;
+      font-size: 1rem;
+      margin: 0 auto 40px auto;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      display: block;
     }
   </style>
 </head>
 
+<input
+  type="text"
+  id="searchInput"
+  placeholder="Search resources..."
+  style="
+    display:block;
+    margin: 0 auto 20px auto;
+    padding: 12px 14px;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 0.95rem;
+  "
+>
+
 <body>
-<div class="container">
-  <h1>Learning Resources</h1>
-  <p class="subtitle">
-    Curated materials shared by the Audiology Students Network.
-  </p>
+  <div class="container">
+    <h1>Learning Resources</h1>
+
+    <p class="subtitle">
+      Curated materials shared by the Audiology Students Network.
+    </p>
+
+    <select
+      id="categoryFilter"
+      style="
+        display: block;
+        margin: 0 auto 40px auto;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-size: 0.95rem;
+      "
+    >
+      <option value="all">All categories</option>
+      <option value="Articles">Articles</option>
+      <option value="Videos">Videos</option>
+      <option value="PDFs">PDFs</option>
+      <option value="Tools">Tools</option>
+    </select>
+  </div>
+</body>
 
   {% if resources %}
     {% for r in resources %}
-      <div class="resource-card">
-        <a href="{{ r[2] }}" target="_blank" class="resource-title">
-          {{ r[0] }}
-        </a>
+      <div class="resource-card" data-category="{{ r[4] }}">
+
+        <!-- TITLE + CATEGORY -->
+        <div class="header">
+          <span class="resource-title">{{ r[0] }}</span>
+
+          {% if r[4] %}
+            <span class="badge">{{ r[4] }}</span>
+          {% endif %}
+        </div>
 
         {% if r[3] %}
           <p>{{ r[3] }}</p>
         {% endif %}
 
+        <!-- META -->
         <div class="meta">
           <span>
-            {{ r[1]|capitalize }}
-            {% if r[4] %} · {{ r[4] }}{% endif %}
-            {% if r[5] %} · Updated {{ r[5] }}{% endif %}
+            Type: {{ r[1]|capitalize }}
+            {% if r[5] %}
+              · Last updated {{ r[5] }}
+            {% endif %}
           </span>
 
-          <a href="{{ r[2] }}" target="_blank" class="open-btn">
-            Open →
-          </a>
+          {% if r[2] %}
+            <a href="{{ r[2] }}" target="_blank" class="open-btn">
+              Open →
+            </a>
+          {% else %}
+            <span class="open-btn disabled">
+              Not available
+            </span>
+          {% endif %}
         </div>
+
       </div>
     {% endfor %}
   {% else %}
@@ -111,6 +202,54 @@
     </p>
   {% endif %}
 </div>
+
+<script>
+  const searchInput = document.getElementById("searchInput");
+  const categoryFilter = document.getElementById("categoryFilter");
+  const cards = document.querySelectorAll(".resource-card");
+
+  function highlight(text, query) {
+    if (!query) return text;
+    const regex = new RegExp(`(${query})`, "gi");
+    return text.replace(regex, "<mark>$1</mark>");
+  }
+
+  function filterResources() {
+    const query = searchInput.value.toLowerCase();
+    const selectedCategory = categoryFilter.value;
+
+    cards.forEach(card => {
+      const titleEl = card.querySelector(".resource-title");
+      const descEl = card.querySelector("p");
+      const category = card.dataset.category;
+
+      const titleText = titleEl.innerText;
+      const descText = descEl ? descEl.innerText : "";
+
+      const matchesSearch =
+        titleText.toLowerCase().includes(query) ||
+        descText.toLowerCase().includes(query);
+
+      const matchesCategory =
+        selectedCategory === "all" || category === selectedCategory;
+
+      if (matchesSearch && matchesCategory) {
+        card.style.display = "block";
+
+        titleEl.innerHTML = highlight(titleText, query);
+        if (descEl) {
+          descEl.innerHTML = highlight(descText, query);
+        }
+      } else {
+        card.style.display = "none";
+      }
+    });
+  }
+
+  searchInput.addEventListener("input", filterResources);
+  categoryFilter.addEventListener("change", filterResources);
+</script>
+
 </body>
 </html>
 
