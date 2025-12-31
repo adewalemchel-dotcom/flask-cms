@@ -3,56 +3,73 @@
 {% block title %}Resources | Admin{% endblock %}
 
 {% block content %}
-<h1>Resources</h1>
+<h1>Manage Resources</h1>
 
+<!-- ADD RESOURCE FORM -->
 <form method="POST" enctype="multipart/form-data">
 
+  <label>Title</label>
   <input type="text" name="title" placeholder="Resource title" required>
 
-  <input type="text" name="category" placeholder="Category (Notes, PDFs, Links)" required>
+  <label>Category</label>
+  <select name="category" required>
+    <option value="Articles">Articles</option>
+    <option value="Videos">Videos</option>
+    <option value="PDFs">PDFs</option>
+    <option value="Tools">Tools</option>
+  </select>
 
+  <label>Resource Type</label>
   <select name="resource_type" required>
     <option value="link">External Link</option>
     <option value="file">Upload File</option>
   </select>
 
-  <input type="url" name="url" placeholder="Paste link (if link)">
+  <label>Resource URL (for links)</label>
+  <input type="url" name="url" placeholder="https://example.com">
 
+  <label>Upload File (for files)</label>
   <input type="file" name="file">
 
+  <label>Description</label>
   <textarea name="description" placeholder="Short description"></textarea>
 
   <button type="submit">Add Resource</button>
 </form>
 
+<hr style="margin:40px 0;">
+
+<!-- RESOURCE LIST -->
 {% if resources %}
   {% for r in resources %}
-  <div class="card">
-    <strong>{{ r[1] }}</strong>
+    <div class="card">
+      <strong>{{ r[1] }}</strong>
 
-    <p>{{ r[4] }}</p>
+      {% if r[4] %}
+        <p>{{ r[4] }}</p>
+      {% endif %}
 
-    <small>
-      Type: {{ r[2] }} ·
-      <a href="{{ r[3] }}" target="_blank">Open</a>
-    </small>
+      <small>
+        Type: {{ r[2] }}
+        {% if r[5] %} · Category: {{ r[5] }}{% endif %}
+        {% if r[6] %} · Updated: {{ r[6] }}{% endif %}
+      </small>
 
-    <div style="margin-top:12px;">
-      <a class="btn" href="/admin/resources/edit/{{ r[0] }}">Edit</a>
+      <div style="margin-top:12px;">
+        <a class="btn" href="/admin/resources/edit/{{ r[0] }}">Edit</a>
 
-      <a
-        class="btn btn-danger"
-        href="/admin/resources/delete/{{ r[0] }}"
-        onclick="return confirm('Delete this resource?')"
-      >
-        Delete
-      </a>
+        <a
+          class="btn btn-danger"
+          href="/admin/resources/delete/{{ r[0] }}"
+          onclick="return confirm('Delete this resource?')"
+        >
+          Delete
+        </a>
+      </div>
     </div>
-  </div>
-{% endfor %}
+  {% endfor %}
 {% else %}
   <p>No resources added yet.</p>
 {% endif %}
 
 {% endblock %}
-

@@ -147,16 +147,17 @@ def faq():
 def resources():
     conn = get_db()
     cursor = conn.cursor()
+
     cursor.execute("""
-        SELECT title, resource_type, url, description
+        SELECT title, resource_type, url, description, category, updated_at
         FROM resources
         ORDER BY id DESC
     """)
+
     resources = cursor.fetchall()
     conn.close()
 
     return render_template("resources.html", resources=resources)
-
 
 # ------------------ NEWS ------------------
 
@@ -338,19 +339,22 @@ def admin_resources():
     cursor = conn.cursor()
 
     if request.method == "POST":
-        title = request.form["title"]
-        resource_type = request.form["resource_type"]
-        url = request.form["url"]
-        description = request.form["description"]
+    title = request.form["title"]
+    resource_type = request.form["resource_type"]
+    url = request.form["url"]
+    description = request.form["description"]
+    category = request.form["category"]
+    updated_at = datetime.now().strftime("%b %d, %Y")
 
-        cursor.execute(
-            """
-            INSERT INTO resources (title, resource_type, url, description)
-            VALUES (%s, %s, %s, %s)
-            """,
-            (title, resource_type, url, description)
-        )
-        conn.commit()
+    cursor.execute(
+        """
+        INSERT INTO resources
+        (title, resource_type, url, description, category, updated_at)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        """,
+        (title, resource_type, url, description, category, updated_at)
+    )
+    conn.commit()
 
     cursor.execute(
         "SELECT id, title, resource_type, url, description FROM resources ORDER BY id DESC"
@@ -369,31 +373,30 @@ def edit_resource(resource_id):
     cursor = conn.cursor()
 
     if request.method == "POST":
-        title = request.form["title"]
-        resource_type = request.form["resource_type"]
-        url = request.form["url"]
-        description = request.form["description"]
-
-        cursor.execute(
-            """
-            UPDATE resources
-            SET title = %s, resource_type = %s, url = %s, description = %s
-            WHERE id = %s
-            """,
-            (title, resource_type, url, description, resource_id)
-        )
-        conn.commit()
-        conn.close()
-        return redirect("/admin/resources")
+    title = request.form["title"]
+    resource_type = request.form["resource_type"]
+    url = request.form["url"]
+    description = request.form["description"]
+    category = request.form["category"]
+    updated_at = datetime.now().strftime("%Y-%m-%d")
 
     cursor.execute(
-        "SELECT id, title, resource_type, url, description FROM resources WHERE id = %s",
-        (resource_id,)
+        """
+        UPDATE resources
+        SET title=%s,
+            resource_type=%s,
+            url=%s,
+            description=%s,
+            category=%s,
+            updated_at=%s
+        WHERE id=%s
+        """,
+        (title, resource_type, url, description, category, updated_at, resource_id)
     )
-    resource = cursor.fetchone()
-    conn.close()
 
-    return render_template("edit_resource.html", resource=resource)
+    conn.commit()
+    conn.close()
+    return redirect("/admin/resources")
 
 @app.route("/admin/resources/delete/<int:resource_id>")
 def delete_resource(resource_id):
@@ -407,6 +410,13 @@ def delete_resource(resource_id):
     conn.close()
 
     return redirect("/admin/resources")
+
+cursor.execute("""
+    SELECT id, title, resource_type, url, description, category, updated_at
+    FROM resources
+    ORDER BY id DESC
+""")
+resources = cursor.fetchall()
 
 
 # ------------------ RUN APP ------------------
