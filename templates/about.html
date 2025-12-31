@@ -92,26 +92,34 @@
       border-radius: 2px;
     }
 
+    /* MOBILE NAV + FADE SLIDE */
     @media (max-width: 760px) {
+      .menu-toggle {
+        display: flex;
+      }
+
       .nav-links {
-        display: none;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: #fff;
         flex-direction: column;
-        gap: 16px;
-        margin-top: 20px;
+        gap: 20px;
+        padding: 30px 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+
         opacity: 0;
         pointer-events: none;
         transform: translateY(-10px);
-        transition: all 0.25s ease;
-        align-items: center;
-        text-align: center;
+        transition: opacity 0.25s ease, transform 0.25s ease;
       }
+
       .nav-links.open {
-        display: flex;
         opacity: 1;
         pointer-events: auto;
         transform: translateY(0);
       }
-      .menu-toggle { display: flex; }
     }
 
     /* HERO */
@@ -234,25 +242,6 @@
     <p>We envision a future where every audiology student — regardless of institution or location — has equal access to knowledge, mentorship, and opportunities that support academic excellence and professional growth.</p>
   </section>
 
-  <section class="fade-in">
-    <h2>Our Core Values</h2>
-    <div class="values">
-      <div class="value-card">
-        <h3>🤝 Collaboration</h3>
-        <p>We believe learning is stronger when students share ideas, experiences, and support.</p>
-      </div>
-      <div class="value-card">
-        <h3>📘 Excellence</h3>
-        <p>We promote academic integrity, evidence-based practice, and continuous learning.</p>
-      </div>
-      <div class="value-card">
-        <h3>🌍 Inclusion</h3>
-        <p>Every audiology student deserves a voice and access to opportunities.</p>
-      </div>
-      <div class="value-card">
-        <h3>🚀 Growth</h3>
-        <p>We support personal, academic, and professional development.</p>
-      </div>
     </div>
   </section>
 
@@ -281,7 +270,10 @@
   // Mobile menu toggle
   const toggle = document.querySelector('.menu-toggle');
   const nav = document.querySelector('.nav-links');
-  toggle.addEventListener('click', () => nav.classList.toggle('open'));
+
+  toggle.addEventListener('click', () => {
+    nav.classList.toggle('open');
+  });
 </script>
 
 </body>
