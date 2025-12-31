@@ -1,0 +1,31 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Edit Resource{% endblock %}
+
+{% block content %}
+<h1>Edit Resource</h1>
+
+<form method="POST">
+  <label>Title</label>
+  <input type="text" name="title" value="{{ resource[1] }}" required>
+
+  <label>Resource Type</label>
+  <select name="resource_type" required>
+    <option value="pdf" {% if resource[2] == "pdf" %}selected{% endif %}>PDF</option>
+    <option value="article" {% if resource[2] == "article" %}selected{% endif %}>Article</option>
+    <option value="video" {% if resource[2] == "video" %}selected{% endif %}>Video</option>
+  </select>
+
+  <label>Resource URL</label>
+  <input type="url" name="url" value="{{ resource[3] }}" required>
+
+  <label>Description</label>
+  <textarea name="description">{{ resource[4] }}</textarea>
+
+  <button type="submit">Save Changes</button>
+</form>
+
+<a href="/admin/resources" class="btn" style="margin-top:20px;display:inline-block;">
+  ← Back to Resources
+</a>
+{% endblock %}
