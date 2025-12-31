@@ -339,12 +339,12 @@ def admin_resources():
     cursor = conn.cursor()
 
     if request.method == "POST":
-    title = request.form["title"]
-    resource_type = request.form["resource_type"]
-    url = request.form["url"]
-    description = request.form["description"]
-    category = request.form["category"]
-    updated_at = datetime.now().strftime("%b %d, %Y")
+        title = request.form["title"]
+        resource_type = request.form["resource_type"]
+        url = request.form["url"]
+        description = request.form["description"]
+        category = request.form["category"]
+        updated_at = datetime.now().strftime("%b %d, %Y")
 
     cursor.execute(
         """
