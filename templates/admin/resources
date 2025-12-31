@@ -1,0 +1,49 @@
+@app.route("/admin/resources", methods=["GET", "POST"])
+def admin_resources():
+    if not session.get("admin_logged_in"):
+        return redirect("/admin/login")
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+        title = request.form["title"]
+        category = request.form["category"]
+        description = request.form["description"]
+        resource_type = request.form["resource_type"]
+
+        url = None
+        file_path = None
+
+        if resource_type == "link":
+            url = request.form["url"]
+
+        if resource_type == "file":
+            file = request.files["file"]
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                save_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+                file.save(save_path)
+                file_path = save_path
+
+        cursor.execute(
+            """
+            INSERT INTO resources
+            (title, category, resource_type, url, file_path, description)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            """,
+            (title, category, resource_type, url, file_path, description)
+        )
+        conn.commit()
+
+    cursor.execute(
+        """
+        SELECT id, title, category, resource_type, url, file_path, description
+        FROM resources
+        ORDER BY id DESC
+        """
+    )
+    resources = cursor.fetchall()
+    conn.close()
+
+    return render_template("admin_resources.html", resources=resources)

@@ -2,10 +2,16 @@ from flask import Flask, render_template, request, redirect, session
 from datetime import datetime
 import psycopg2
 import os
+from werkzeug.utils import secure_filename
+
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
 
+UPLOAD_FOLDER = "static/uploads"
+ALLOWED_EXTENSIONS = {"pdf", "docx", "pptx", "png", "jpg", "jpeg"}
+
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 def get_db():
     return psycopg2.connect(
@@ -13,6 +19,30 @@ def get_db():
         sslmode="require"
     )
 
+def migrate_resources_table():
+    conn = get_db()
+    cursor = conn.cursor()
+
+    # Check and add category column
+    cursor.execute("""
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_name='resources' AND column_name='category'
+    """)
+    if not cursor.fetchone():
+        cursor.execute("ALTER TABLE resources ADD COLUMN category TEXT")
+
+    # Check and add file_path column
+    cursor.execute("""
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_name='resources' AND column_name='file_path'
+    """)
+    if not cursor.fetchone():
+        cursor.execute("ALTER TABLE resources ADD COLUMN file_path TEXT")
+
+    conn.commit()
+    conn.close()
 
 def init_db():
     conn = get_db()
@@ -45,6 +75,8 @@ def init_db():
     conn.commit()
     conn.close()
 
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # ------------------ SHARED DATA ------------------
 
@@ -123,6 +155,20 @@ def faq():
     conn.close()
 
     return render_template("faq.html", faqs=faqs)
+
+@app.route("/resources")
+def resources():
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT title, description, category, file_path
+        FROM resources
+        ORDER BY id DESC
+    """)
+    resources = cursor.fetchall()
+    conn.close()
+
+    return render_template("resources.html", resources=resources)
 
 
 # ------------------ NEWS ------------------
@@ -295,6 +341,86 @@ def edit_faq(faq_id):
     conn.close()
 
     return render_template("edit_faq.html", faq=faq)
+
+@app.route("/admin/resources", methods=["GET", "POST"])
+def admin_resources():
+    if not session.get("admin_logged_in"):
+        return redirect("/admin/login")
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+        title = request.form["title"]
+        resource_type = request.form["resource_type"]
+        url = request.form["url"]
+        description = request.form["description"]
+
+        cursor.execute(
+            """
+            INSERT INTO resources (title, resource_type, url, description)
+            VALUES (%s, %s, %s, %s)
+            """,
+            (title, resource_type, url, description)
+        )
+        conn.commit()
+
+    cursor.execute(
+        "SELECT id, title, resource_type, url, description FROM resources ORDER BY id DESC"
+    )
+    resources = cursor.fetchall()
+    conn.close()
+
+    return render_template("admin_resources.html", resources=resources)
+
+@app.route("/admin/resources/edit/<int:resource_id>", methods=["GET", "POST"])
+def edit_resource(resource_id):
+    if not session.get("admin_logged_in"):
+        return redirect("/admin/login")
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+        title = request.form["title"]
+        resource_type = request.form["resource_type"]
+        url = request.form["url"]
+        description = request.form["description"]
+
+        cursor.execute(
+            """
+            UPDATE resources
+            SET title = %s, resource_type = %s, url = %s, description = %s
+            WHERE id = %s
+            """,
+            (title, resource_type, url, description, resource_id)
+        )
+        conn.commit()
+        conn.close()
+        return redirect("/admin/resources")
+
+    cursor.execute(
+        "SELECT id, title, resource_type, url, description FROM resources WHERE id = %s",
+        (resource_id,)
+    )
+    resource = cursor.fetchone()
+    conn.close()
+
+    return render_template("edit_resource.html", resource=resource)
+
+@app.route("/admin/resources/delete/<int:resource_id>")
+def delete_resource(resource_id):
+    if not session.get("admin_logged_in"):
+        return redirect("/admin/login")
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM resources WHERE id = %s", (resource_id,))
+    conn.commit()
+    conn.close()
+
+    return redirect("/admin/resources")
+
 
 # ------------------ RUN APP ------------------
 

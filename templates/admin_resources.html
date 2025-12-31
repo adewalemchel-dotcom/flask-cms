@@ -1,0 +1,49 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Resources | Admin{% endblock %}
+
+{% block content %}
+<h1>Resources</h1>
+
+<form method="POST" enctype="multipart/form-data">
+
+  <input type="text" name="title" placeholder="Resource title" required>
+
+  <input type="text" name="category" placeholder="Category (Notes, PDFs, Links)" required>
+
+  <select name="resource_type" required>
+    <option value="link">External Link</option>
+    <option value="file">Upload File</option>
+  </select>
+
+  <input type="url" name="url" placeholder="Paste link (if link)">
+
+  <input type="file" name="file">
+
+  <textarea name="description" placeholder="Short description"></textarea>
+
+  <button type="submit">Add Resource</button>
+</form>
+
+{% if resources %}
+  {% for r in resources %}
+    <div class="card">
+      <h3>{{ r[1] }}</h3>
+      <p><strong>Category:</strong> {{ r[2] }}</p>
+      <p>{{ r[6] }}</p>
+
+      {% if r[3] == "link" %}
+        <a href="{{ r[4] }}" target="_blank" class="btn">Open Link</a>
+      {% else %}
+        <a href="/{{ r[5] }}" target="_blank" class="btn">Download File</a>
+      {% endif %}
+
+      <a href="/admin/resources/delete/{{ r[0] }}" class="btn btn-danger">Delete</a>
+    </div>   <!-- this closes the card -->
+  {% endfor %}
+{% else %}
+  <p>No resources added yet.</p>
+{% endif %}
+
+{% endblock %}
+
