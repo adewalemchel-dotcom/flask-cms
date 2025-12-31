@@ -332,37 +332,42 @@ def edit_faq(faq_id):
 
 @app.route("/admin/resources", methods=["GET", "POST"])
 def admin_resources():
-    if not session.get("admin_logged_in"):
-        return redirect("/admin/login")
-
     conn = get_db()
     cursor = conn.cursor()
 
+    # ---------- HANDLE FORM SUBMIT ----------
     if request.method == "POST":
         title = request.form["title"]
         resource_type = request.form["resource_type"]
         url = request.form["url"]
         description = request.form["description"]
         category = request.form["category"]
-        updated_at = datetime.now().strftime("%b %d, %Y")
+        updated_at = datetime.now().strftime("%Y-%m-%d")
 
-    cursor.execute(
-        """
-        INSERT INTO resources
-        (title, resource_type, url, description, category, updated_at)
-        VALUES (%s, %s, %s, %s, %s, %s)
-        """,
-        (title, resource_type, url, description, category, updated_at)
-    )
-    conn.commit()
+        cursor.execute(
+            """
+            INSERT INTO resources (title, resource_type, url, description, category, updated_at)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            """,
+            (title, resource_type, url, description, category, updated_at)
+        )
 
-    cursor.execute(
-        "SELECT id, title, resource_type, url, description FROM resources ORDER BY id DESC"
-    )
+        conn.commit()
+
+    # ---------- ALWAYS FETCH RESOURCES ----------
+    cursor.execute("""
+        SELECT id, title, resource_type, url, description, category, updated_at
+        FROM resources
+        ORDER BY id DESC
+    """)
     resources = cursor.fetchall()
+
     conn.close()
 
-    return render_template("admin_resources.html", resources=resources)
+    return render_template(
+        "admin/resources.html",
+        resources=resources
+    )
 
 @app.route("/admin/resources/edit/<int:resource_id>", methods=["GET", "POST"])
 def edit_resource(resource_id):
