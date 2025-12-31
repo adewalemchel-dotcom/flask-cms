@@ -373,30 +373,44 @@ def edit_resource(resource_id):
     cursor = conn.cursor()
 
     if request.method == "POST":
-    title = request.form["title"]
-    resource_type = request.form["resource_type"]
-    url = request.form["url"]
-    description = request.form["description"]
-    category = request.form["category"]
-    updated_at = datetime.now().strftime("%Y-%m-%d")
+        title = request.form["title"]
+        resource_type = request.form["resource_type"]
+        url = request.form["url"]
+        description = request.form["description"]
+        category = request.form["category"]
+        updated_at = datetime.now().strftime("%Y-%m-%d")
+
+        cursor.execute(
+            """
+            UPDATE resources
+            SET title=%s,
+                resource_type=%s,
+                url=%s,
+                description=%s,
+                category=%s,
+                updated_at=%s
+            WHERE id=%s
+            """,
+            (title, resource_type, url, description, category, updated_at, resource_id)
+        )
+
+        conn.commit()
+        conn.close()
+        return redirect("/admin/resources")
 
     cursor.execute(
         """
-        UPDATE resources
-        SET title=%s,
-            resource_type=%s,
-            url=%s,
-            description=%s,
-            category=%s,
-            updated_at=%s
-        WHERE id=%s
+        SELECT id, title, resource_type, url, description, category
+        FROM resources
+        WHERE id = %s
         """,
-        (title, resource_type, url, description, category, updated_at, resource_id)
+        (resource_id,)
     )
-
-    conn.commit()
+    resource = cursor.fetchone()
     conn.close()
-    return redirect("/admin/resources")
+
+    return render_template("edit_resource.html", resource=resource)
+
 
 @app.route("/admin/resources/delete/<int:resource_id>")
 def delete_resource(resource_id):
@@ -411,12 +425,6 @@ def delete_resource(resource_id):
 
     return redirect("/admin/resources")
 
-cursor.execute("""
-    SELECT id, title, resource_type, url, description, category, updated_at
-    FROM resources
-    ORDER BY id DESC
-""")
-resources = cursor.fetchall()
 
 
 # ------------------ RUN APP ------------------
