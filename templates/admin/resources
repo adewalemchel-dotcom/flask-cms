@@ -8,19 +8,21 @@ def admin_resources():
 
     # Handle new resource
     if request.method == "POST":
-        title = request.form["title"]
-        resource_type = request.form["resource_type"]
-        url = request.form["url"]
-        description = request.form.get("description", "")
+    title = request.form["title"]
+    resource_type = request.form["resource_type"]
+    url = request.form["url"]
+    description = request.form["description"]
+    category = request.form["category"]
+    updated_at = datetime.now().strftime("%b %d, %Y")
 
-        cursor.execute(
-            """
-            INSERT INTO resources (title, resource_type, url, description)
-            VALUES (%s, %s, %s, %s)
-            """,
-            (title, resource_type, url, description)
-        )
-        conn.commit()
+    cursor.execute(
+        """
+        INSERT INTO resources (title, resource_type, url, description, category, updated_at)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        """,
+        (title, resource_type, url, description, category, updated_at)
+    )
+    conn.commit()
 
     # Fetch resources
     cursor.execute(
