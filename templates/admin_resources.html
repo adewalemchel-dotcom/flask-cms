@@ -27,20 +27,29 @@
 
 {% if resources %}
   {% for r in resources %}
-    <div class="card">
-      <h3>{{ r[1] }}</h3>
-      <p><strong>Category:</strong> {{ r[2] }}</p>
-      <p>{{ r[6] }}</p>
+  <div class="card">
+    <strong>{{ r[1] }}</strong>
 
-      {% if r[3] == "link" %}
-        <a href="{{ r[4] }}" target="_blank" class="btn">Open Link</a>
-      {% else %}
-        <a href="/{{ r[5] }}" target="_blank" class="btn">Download File</a>
-      {% endif %}
+    <p>{{ r[4] }}</p>
 
-      <a href="/admin/resources/delete/{{ r[0] }}" class="btn btn-danger">Delete</a>
-    </div>   <!-- this closes the card -->
-  {% endfor %}
+    <small>
+      Type: {{ r[2] }} ·
+      <a href="{{ r[3] }}" target="_blank">Open</a>
+    </small>
+
+    <div style="margin-top:12px;">
+      <a class="btn" href="/admin/resources/edit/{{ r[0] }}">Edit</a>
+
+      <a
+        class="btn btn-danger"
+        href="/admin/resources/delete/{{ r[0] }}"
+        onclick="return confirm('Delete this resource?')"
+      >
+        Delete
+      </a>
+    </div>
+  </div>
+{% endfor %}
 {% else %}
   <p>No resources added yet.</p>
 {% endif %}
