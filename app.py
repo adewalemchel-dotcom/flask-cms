@@ -161,7 +161,7 @@ def resources():
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT title, description, category, file_path
+        SELECT title, resource_type, url, description
         FROM resources
         ORDER BY id DESC
     """)
@@ -350,11 +350,12 @@ def admin_resources():
     conn = get_db()
     cursor = conn.cursor()
 
+    # Handle new resource
     if request.method == "POST":
         title = request.form["title"]
         resource_type = request.form["resource_type"]
         url = request.form["url"]
-        description = request.form["description"]
+        description = request.form.get("description", "")
 
         cursor.execute(
             """
@@ -365,12 +366,17 @@ def admin_resources():
         )
         conn.commit()
 
+    # Fetch resources
     cursor.execute(
-        "SELECT id, title, resource_type, url, description FROM resources ORDER BY id DESC"
+        """
+        SELECT id, title, resource_type, url, description
+        FROM resources
+        ORDER BY id DESC
+        """
     )
     resources = cursor.fetchall()
-    conn.close()
 
+    conn.close()
     return render_template("admin_resources.html", resources=resources)
 
 @app.route("/admin/resources/edit/<int:resource_id>", methods=["GET", "POST"])

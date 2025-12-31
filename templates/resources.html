@@ -68,13 +68,13 @@
 
   {% if resources %}
     {% for r in resources %}
-      <div class="resource-card">
-        <a href="{{ r[3] }}" target="_blank">{{ r[0] }}</a>
-        <p>{{ r[1] }}</p>
-        <div class="category">Category: {{ r[2] }}</div>
-      </div>
-    {% endfor %}
-  {% else %}
+     <div class="resource-card">
+      <a href="{{ r[2] }}" target="_blank">{{ r[0] }}</a>
+      <p>{{ r[3] }}</p>
+      <small>Type: {{ r[1] }}</small>
+     </div>
+   {% endfor %}
+ {% else %}
     <p style="text-align:center;color:#666;">
       Resources will be added soon.
     </p>

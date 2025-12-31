@@ -6,44 +6,84 @@ def admin_resources():
     conn = get_db()
     cursor = conn.cursor()
 
+    # Handle new resource
     if request.method == "POST":
         title = request.form["title"]
-        category = request.form["category"]
-        description = request.form["description"]
         resource_type = request.form["resource_type"]
-
-        url = None
-        file_path = None
-
-        if resource_type == "link":
-            url = request.form["url"]
-
-        if resource_type == "file":
-            file = request.files["file"]
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                save_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-                file.save(save_path)
-                file_path = save_path
+        url = request.form["url"]
+        description = request.form.get("description", "")
 
         cursor.execute(
             """
-            INSERT INTO resources
-            (title, category, resource_type, url, file_path, description)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            INSERT INTO resources (title, resource_type, url, description)
+            VALUES (%s, %s, %s, %s)
             """,
-            (title, category, resource_type, url, file_path, description)
+            (title, resource_type, url, description)
         )
         conn.commit()
 
+    # Fetch resources
     cursor.execute(
         """
-        SELECT id, title, category, resource_type, url, file_path, description
+        SELECT id, title, resource_type, url, description
         FROM resources
         ORDER BY id DESC
         """
     )
     resources = cursor.fetchall()
-    conn.close()
 
+    conn.close()
     return render_template("admin_resources.html", resources=resources)
+
+{% extends "admin_base.html" %}
+
+{% block title %}Admin – Resources{% endblock %}
+
+{% block content %}
+<h1>Manage Resources</h1>
+
+<!-- ADD RESOURCE FORM -->
+<form method="POST">
+  <h3>Add New Resource</h3>
+
+  <label>Title</label>
+  <input type="text" name="title" required>
+
+  <label>Resource Type</label>
+  <select name="resource_type" required>
+    <option value="pdf">PDF</option>
+    <option value="article">Article</option>
+    <option value="video">Video</option>
+  </select>
+
+  <label>Resource URL</label>
+  <input type="url" name="url" placeholder="https://..." required>
+
+  <label>Description (optional)</label>
+  <textarea name="description"></textarea>
+
+  <button type="submit">Add Resource</button>
+</form>
+
+<hr style="margin:40px 0;">
+
+<!-- RESOURCE LIST -->
+<h3>Existing Resources</h3>
+
+{% if resources %}
+  {% for r in resources %}
+    <div class="card">
+      <strong>{{ r[1] }}</strong>
+      <p>{{ r[4] }}</p>
+
+      <small>
+        Type: {{ r[2] }} ·
+        <a href="{{ r[3] }}" target="_blank">Open link</a>
+      </small>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>No resources added yet.</p>
+{% endif %}
+
+{% endblock %}
