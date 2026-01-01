@@ -118,11 +118,84 @@
       padding: 0 4px;
       border-radius: 4px;
     }
+
+    /* ---------- DARK MODE ---------- */
+    body.dark {
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+
+    body.dark .resource-card {
+      background: #111827;
+      box-shadow: none;
+    }
+
+    body.dark .subtitle {
+      color: #9ca3af;
+    }
+
+    body.dark .resource-card p {
+      color: #d1d5db;
+    }
+
+    body.dark .meta {
+      color: #9ca3af;
+    }
+
+    body.dark .badge {
+      background: #1e293b;
+      color: #93c5fd;
+    }
+
+    body.dark .open-btn {
+      background: #2563eb;
+    }
+
+    body.dark .open-btn.disabled {
+      background: #374151;
+    }
+
+    body.dark input,
+    body.dark select {
+      background: #111827;
+      color: #e5e7eb;
+      border-color: #374151;
+    }
+
+    body.dark mark {
+      background: #fde68a;
+      color: #000;
+    }
+
+    /* Toggle button */
+    .theme-toggle {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid #ddd;
+      background: #fff;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    body.dark .theme-toggle {
+      background: #111827;
+      color: #e5e7eb;
+      border-color: #374151;
+    }
+
   </style>
 </head>
 
 <body>
-  <div class="container">
+  <button id="themeToggle" class="theme-toggle">
+  🌙 Dark mode
+  </button>
+  
+    <div class="container">
     <h1>Learning Resources</h1>
 
     <p class="subtitle">
@@ -235,5 +308,25 @@
     searchInput.addEventListener("input", filterResources);
     categoryFilter.addEventListener("change", filterResources);
   </script>
+
+  <script>
+     const toggle = document.getElementById("themeToggle");
+
+     // Load saved theme
+     if (localStorage.getItem("theme") === "dark") {
+       document.body.classList.add("dark");
+       toggle.textContent = "☀️ Light mode";
+     }
+
+     toggle.addEventListener("click", () => {
+       document.body.classList.toggle("dark");
+
+       const isDark = document.body.classList.contains("dark");
+       toggle.textContent = isDark ? "☀️ Light mode" : "🌙 Dark mode";
+       localStorage.setItem("theme", isDark ? "dark" : "light");
+    });
+  </script>
+
+
 </body>
 </html>
