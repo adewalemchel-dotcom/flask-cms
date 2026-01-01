@@ -20,14 +20,6 @@
       padding: 0 20px;
     }
 
-    .resource-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 22px;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
     h1 {
       text-align: center;
       margin-bottom: 10px;
@@ -36,7 +28,27 @@
     .subtitle {
       text-align: center;
       color: #555;
-      margin-bottom: 50px;
+      margin-bottom: 40px;
+    }
+
+    .filter-select,
+    .search-input {
+      width: 100%;
+      max-width: 420px;
+      padding: 12px 16px;
+      font-size: 1rem;
+      margin: 0 auto 20px auto;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      display: block;
+    }
+
+    .resource-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 22px;
+      max-width: 900px;
+      margin: 0 auto;
     }
 
     .resource-card {
@@ -44,7 +56,6 @@
       padding: 22px;
       border-radius: 14px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.06);
-      margin-bottom: 22px;
     }
 
     .header {
@@ -58,7 +69,6 @@
       font-size: 1.1rem;
       font-weight: 600;
       color: #0d99ff;
-      text-decoration: none;
       line-height: 1.3;
     }
 
@@ -108,17 +118,6 @@
       padding: 0 4px;
       border-radius: 4px;
     }
-
-    .filter-select {
-      width: 100%;
-      max-width: 420px;
-      padding: 12px 16px;
-      font-size: 1rem;
-      margin: 0 auto 40px auto;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      display: block;
-    }
   </style>
 </head>
 
@@ -130,137 +129,111 @@
       Curated materials shared by the Audiology Students Network.
     </p>
 
+    <!-- SEARCH -->
     <input
       type="text"
       id="searchInput"
+      class="search-input"
       placeholder="Search resources..."
-      style="
-        display: block;
-        margin: 0 auto 20px auto;
-        padding: 12px 14px;
-        width: 100%;
-        max-width: 420px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        font-size: 0.95rem;
-      "
     />
 
-    <select
-      id="categoryFilter"
-      style="
-        display: block;
-        margin: 0 auto 40px auto;
-        padding: 10px 14px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        font-size: 0.95rem;
-      "
-    >
-      <select id="categoryFilter" class="filter-select">
-       <option value="all">All categories</option>
-
-       {% for c in categories %}
+    <!-- CATEGORY FILTER -->
+    <select id="categoryFilter" class="filter-select">
+      <option value="all">All categories</option>
+      {% for c in categories %}
         <option value="{{ c }}">{{ c }}</option>
-       {% endfor %}
-      </select>
-  </div>
-</body>
+      {% endfor %}
+    </select>
 
-<div class="resource-list"></div>
-  {% if resources %}
-    {% for r in resources %}
-      <div class="resource-card" data-category="{{ r[4] }}">
+    <!-- RESOURCE LIST -->
+    <div class="resource-list">
+      {% if resources %}
+        {% for r in resources %}
+          <div class="resource-card" data-category="{{ r[4] }}">
 
-        <!-- TITLE + CATEGORY -->
-        <div class="header">
-          <span class="resource-title">{{ r[0] }}</span>
+            <div class="header">
+              <span class="resource-title">{{ r[0] }}</span>
 
-          {% if r[4] %}
-            <span class="badge">{{ r[4] }}</span>
-          {% endif %}
-        </div>
+              {% if r[4] %}
+                <span class="badge">{{ r[4] }}</span>
+              {% endif %}
+            </div>
 
-        {% if r[3] %}
-          <p>{{ r[3] }}</p>
-        {% endif %}
-
-        <!-- META -->
-        <div class="meta">
-          <span>
-            Type: {{ r[1]|capitalize }}
-            {% if r[5] %}
-              · Last updated {{ r[5] }}
+            {% if r[3] %}
+              <p>{{ r[3] }}</p>
             {% endif %}
-          </span>
 
-          {% if r[2] %}
-            <a href="{{ r[2] }}" target="_blank" class="open-btn">
-              Open →
-            </a>
-          {% else %}
-            <span class="open-btn disabled">
-              Not available
-            </span>
-          {% endif %}
-        </div>
+            <div class="meta">
+              <span>
+                Type: {{ r[1]|capitalize }}
+                {% if r[5] %}
+                  · Last updated {{ r[5] }}
+                {% endif %}
+              </span>
 
-      </div>
-    {% endfor %}
-  {% else %}
-    <p style="text-align:center;color:#666;">
-      Resources will be added soon.
-    </p>
-  {% endif %}
-</div>
+              {% if r[2] %}
+                <a href="{{ r[2] }}" target="_blank" class="open-btn">
+                  Open →
+                </a>
+              {% else %}
+                <span class="open-btn disabled">
+                  Not available
+                </span>
+              {% endif %}
+            </div>
 
-<script>
-  const searchInput = document.getElementById("searchInput");
-  const categoryFilter = document.getElementById("categoryFilter");
-  const cards = document.querySelectorAll(".resource-card");
+          </div>
+        {% endfor %}
+      {% else %}
+        <p style="text-align:center;color:#666;">
+          Resources will be added soon.
+        </p>
+      {% endif %}
+    </div>
+  </div>
 
-  function highlight(text, query) {
-    if (!query) return text;
-    const regex = new RegExp(`(${query})`, "gi");
-    return text.replace(regex, "<mark>$1</mark>");
-  }
+  <script>
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const cards = document.querySelectorAll(".resource-card");
 
-  function filterResources() {
-    const query = searchInput.value.toLowerCase();
-    const selectedCategory = categoryFilter.value;
+    function highlight(text, query) {
+      if (!query) return text;
+      const regex = new RegExp(`(${query})`, "gi");
+      return text.replace(regex, "<mark>$1</mark>");
+    }
 
-    cards.forEach(card => {
-      const titleEl = card.querySelector(".resource-title");
-      const descEl = card.querySelector("p");
-      const category = card.dataset.category;
+    function filterResources() {
+      const query = searchInput.value.toLowerCase();
+      const selectedCategory = categoryFilter.value;
 
-      const titleText = titleEl.innerText;
-      const descText = descEl ? descEl.innerText : "";
+      cards.forEach(card => {
+        const titleEl = card.querySelector(".resource-title");
+        const descEl = card.querySelector("p");
+        const category = card.dataset.category;
 
-      const matchesSearch =
-        titleText.toLowerCase().includes(query) ||
-        descText.toLowerCase().includes(query);
+        const titleText = titleEl.innerText;
+        const descText = descEl ? descEl.innerText : "";
 
-      const matchesCategory =
-        selectedCategory === "all" || category === selectedCategory;
+        const matchesSearch =
+          titleText.toLowerCase().includes(query) ||
+          descText.toLowerCase().includes(query);
 
-      if (matchesSearch && matchesCategory) {
-        card.style.display = "block";
+        const matchesCategory =
+          selectedCategory === "all" || category === selectedCategory;
 
-        titleEl.innerHTML = highlight(titleText, query);
-        if (descEl) {
-          descEl.innerHTML = highlight(descText, query);
+        if (matchesSearch && matchesCategory) {
+          card.style.display = "block";
+          titleEl.innerHTML = highlight(titleText, query);
+          if (descEl) descEl.innerHTML = highlight(descText, query);
+        } else {
+          card.style.display = "none";
         }
-      } else {
-        card.style.display = "none";
-      }
-    });
-  }
+      });
+    }
 
-  searchInput.addEventListener("input", filterResources);
-  categoryFilter.addEventListener("change", filterResources);
-</script>
-
+    searchInput.addEventListener("input", filterResources);
+    categoryFilter.addEventListener("change", filterResources);
+  </script>
 </body>
 </html>
-
