@@ -148,16 +148,30 @@ def resources():
     conn = get_db()
     cursor = conn.cursor()
 
+    # Get all resources
     cursor.execute("""
         SELECT title, resource_type, url, description, category, updated_at
         FROM resources
         ORDER BY id DESC
     """)
-
     resources = cursor.fetchall()
+
+    # ✅ Get unique categories (important part)
+    cursor.execute("""
+        SELECT DISTINCT category
+        FROM resources
+        WHERE category IS NOT NULL AND category != ''
+        ORDER BY category ASC
+    """)
+    categories = [row[0] for row in cursor.fetchall()]
+
     conn.close()
 
-    return render_template("resources.html", resources=resources)
+    return render_template(
+        "resources.html",
+        resources=resources,
+        categories=categories
+    )
 
 # ------------------ NEWS ------------------
 

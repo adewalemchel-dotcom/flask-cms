@@ -157,12 +157,13 @@
         font-size: 0.95rem;
       "
     >
-      <option value="all">All categories</option>
-      <option value="Articles">Articles</option>
-      <option value="Videos">Videos</option>
-      <option value="PDFs">PDFs</option>
-      <option value="Tools">Tools</option>
-    </select>
+      <select id="categoryFilter" class="filter-select">
+       <option value="all">All categories</option>
+
+       {% for c in categories %}
+        <option value="{{ c }}">{{ c }}</option>
+       {% endfor %}
+      </select>
   </div>
 </body>
 
